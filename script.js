@@ -44,24 +44,45 @@ function Player(x, y, infected){
         c.fill();
 
         // Movement
-        if (left == true && this.x > 1){
+        if (left == true && up == false && down == false && this.x > 0){
             playerVariable.dx = -5;
         }
-
-        else if (right == true && this.x < window.innerWidth - 41){
+        else if ((left == true && up == true) || (left == true && down == true) && this.x > 0){
+            playerVariable.dx = -3.5;
+        }
+        ////////////////
+        if (right == true && up == false && down == false && this.x < window.innerWidth - 41){
             playerVariable.dx = 5;
         }
-
-        else{
+        else if ((right == true && up == true) || (right == true && down == true) && this.x < window.innerHeight - 41){
+            playerVariable.dx = 3.5;
+        }
+        ////////////////
+        if (up == true && right == false && left == false && this.y > 0){
+            playerVariable.dy = -5;
+        }
+        else if ((up == true && right == true) || (up == true && left == true) && this.y > 0){
+            playerVariable.dy = -3.5;
+        }
+        ////////////////
+        if (down == true && right == false && left == false && this.y < window.innerWidth - 41){
+            playerVariable.dy = 5;
+        }
+        else if ((down == true && right == true) || (down == true && left == true) && this.y < window.innerHeight - 41){
+            playerVariable.dy = 3.5;
+        }
+        ////////////////
+        if (down == false && up == false && right == false && left == false){
             playerVariable.dx = 0;
+            playerVariable.dy = 0;
         }
 
+/* Jumping (Maybe use later)
         if (up == true && this.colliding == true){
             jump = 20;
             jump_vel = 12.5;
         }
 
-        // Jump
         if (jump > 0){
             if (jump_vel >= 0){
                 jump_vel -= 0.5;
@@ -87,9 +108,20 @@ function Player(x, y, infected){
             this.vel = 1;
             this.colliding = true;
         }
+*/
 
-        if (this.y > window.innerHeight - 100 - 40){
-            this.y = window.innerHeight - 99 - 40;
+        if (this.y > window.innerHeight- 40){
+            this.y = window.innerHeight - 40;
+        }
+        else if (this.y < 0){
+            this.y = 0;
+        }
+
+        if (this.x > window.innerWidth - 40){
+            this.x = window.innerWidth - 40;
+        }
+        else if (this.x < 0){
+            this.x = 1;
         }
 
         // Movement
@@ -146,14 +178,11 @@ function aim2(e){
 
 function animate(){
     requestAnimationFrame(animate);
-
     c.clearRect(0, 0, canvas.width, canvas.height);
-    c.beginPath();
-    c.rect(0, window.innerHeight - 99, window.innerWidth - 1, 100);
-    c.fillStyle = "#75beff";
-    c.fill();
 
+    // GameObjects
     playerVariable.draw();
+
     c.restore();
 }
 
