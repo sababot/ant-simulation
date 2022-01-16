@@ -31,7 +31,7 @@ function Player(x, y, infected){
     this.move_y_down = true;
 
     this.draw = function(){
-        // Graphics
+        /* Graphics
         c.beginPath();
         c.rect(this.x, this.y, 40, 40);
         if (this.health <= 0){
@@ -42,6 +42,11 @@ function Player(x, y, infected){
         }
 
         c.fill();
+        */
+
+        var img = new Image();
+        img.src = 'ant-image.png';
+        c.drawImage(img, this.x, this.y, 40, 40);
 
         // Movement
         if (left == true && up == false && down == false && this.x > 0){
@@ -54,7 +59,7 @@ function Player(x, y, infected){
         if (right == true && up == false && down == false && this.x < window.innerWidth - 41){
             playerVariable.dx = 5;
         }
-        else if ((right == true && up == true) || (right == true && down == true) && this.x < window.innerHeight - 41){
+        else if ((right == true && up == true) || (right == true && down == true) && this.x < window.innerWidth - 41){
             playerVariable.dx = 3.5;
         }
         ////////////////
@@ -76,39 +81,7 @@ function Player(x, y, infected){
             playerVariable.dx = 0;
             playerVariable.dy = 0;
         }
-
-/* Jumping (Maybe use later)
-        if (up == true && this.colliding == true){
-            jump = 20;
-            jump_vel = 12.5;
-        }
-
-        if (jump > 0){
-            if (jump_vel >= 0){
-                jump_vel -= 0.5;
-            }
-            this.y -= jump_vel;
-            jump -= 1;
-        }
-        else{
-            playerVariable.dy = 0;
-        }
-
-        // Gravity
-        if (this.y < window.innerHeight - 100 - 40 && this.move_y_down == true){
-            if (this.vel < 10){
-                this.vel *= 1.075;
-            }
-
-            this.y += this.vel;
-
-            this.colliding = false;
-        }
-        else{
-            this.vel = 1;
-            this.colliding = true;
-        }
-*/
+        ////////////////
 
         if (this.y > window.innerHeight- 40){
             this.y = window.innerHeight - 40;
