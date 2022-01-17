@@ -46,11 +46,17 @@ function Player(x, y, infected){
 
         var img = new Image();
         img.src = 'ant-image.png';
-        c.drawImage(img, this.x, this.y, 40, 40);
 
         // Movement
         if (left == true && up == false && down == false && this.x > 0){
             playerVariable.dx = -5;
+
+            c.save(); // save current state
+            c.translate(this.x, this.y);
+            c.rotate(-83); // rotate
+            c.translate(-this.x,-this.y);
+            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
+            c.restore(); // restore original states (no rotation etc)
         }
         else if ((left == true && up == true) || (left == true && down == true) && this.x > 0){
             playerVariable.dx = -3.5;
@@ -58,6 +64,13 @@ function Player(x, y, infected){
         ////////////////
         if (right == true && up == false && down == false && this.x < window.innerWidth - 41){
             playerVariable.dx = 5;
+
+            c.save(); // save current state
+            c.translate(this.x, this.y);
+            c.rotate(-80); // rotate
+            c.translate(-this.x,-this.y);
+            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
+            c.restore(); // restore original states (no rotation etc)
         }
         else if ((right == true && up == true) || (right == true && down == true) && this.x < window.innerWidth - 41){
             playerVariable.dx = 3.5;
@@ -80,6 +93,13 @@ function Player(x, y, infected){
         if (down == false && up == false && right == false && left == false){
             playerVariable.dx = 0;
             playerVariable.dy = 0;
+
+            c.save(); // save current state
+            c.translate(this.x, this.y);
+            c.rotate(Math.PI/180); // rotate
+            c.translate(-this.x,-this.y);
+            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
+            c.restore(); // restore original states (no rotation etc)
         }
         ////////////////
 
