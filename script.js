@@ -12,6 +12,7 @@ var right = false;
 var up = false;
 var down = false;
 let jump = 0;
+let rotation = 0;
 
 function Player(x, y, infected){
     this.x = x;
@@ -49,55 +50,51 @@ function Player(x, y, infected){
 
         // Movement
         if (left == true && up == false && down == false && this.x > 0){
-            playerVariable.dx = -5;
-
             c.save(); // save current state
-            c.translate(this.x, this.y);
-            c.rotate(-83); // rotate
-            c.translate(-this.x,-this.y);
+            c.translate(this.x - 20, this.y - 20);
+            c.rotate((rotation - 2.5) * Math.PI / 180); // rotate
+            c.translate(-this.x - 20,-this.y - 20);
+            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
+            c.restore(); // restore original states (no rotation etc)
+            rotation -= 2.5;
+        }
+        
+        ////////////////
+        else if (right == true && up == false && down == false && this.x < window.innerWidth - 41){
+            c.save(); // save current state
+            c.translate(this.x - 20, this.y - 20);
+            c.rotate((rotation + 2.5) * Math.PI / 180); // rotate
+            c.translate(-this.x - 20,-this.y - 20);
+            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
+            c.restore(); // restore original states (no rotation etc)
+            rotation += 2.5;
+        }
+        
+        ////////////////
+        else {
+            c.save(); // save current state
+            c.translate(this.x - 20, this.y - 20);
+            c.rotate(rotation * Math.PI / 180); // rotate
+            c.translate(-this.x - 20,-this.y - 20);
             c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
             c.restore(); // restore original states (no rotation etc)
         }
-        else if ((left == true && up == true) || (left == true && down == true) && this.x > 0){
-            playerVariable.dx = -3.5;
-        }
-        ////////////////
-        if (right == true && up == false && down == false && this.x < window.innerWidth - 41){
-            playerVariable.dx = 5;
-
-            c.save(); // save current state
-            c.translate(this.x, this.y);
-            c.rotate(-80); // rotate
-            c.translate(-this.x,-this.y);
-            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
-            c.restore(); // restore original states (no rotation etc)
-        }
-        else if ((right == true && up == true) || (right == true && down == true) && this.x < window.innerWidth - 41){
-            playerVariable.dx = 3.5;
-        }
-        ////////////////
-        if (up == true && right == false && left == false && this.y > 0){
-            playerVariable.dy = -5;
-        }
-        else if ((up == true && right == true) || (up == true && left == true) && this.y > 0){
-            playerVariable.dy = -3.5;
-        }
-        ////////////////
+        /*
         if (down == true && right == false && left == false && this.y < window.innerWidth - 41){
             playerVariable.dy = 5;
         }
         else if ((down == true && right == true) || (down == true && left == true) && this.y < window.innerHeight - 41){
             playerVariable.dy = 3.5;
         }
+        */
+        playerVariable.dy = 0;
+
         ////////////////
         if (down == false && up == false && right == false && left == false){
-            playerVariable.dx = 0;
-            playerVariable.dy = 0;
-
             c.save(); // save current state
-            c.translate(this.x, this.y);
-            c.rotate(Math.PI/180); // rotate
-            c.translate(-this.x,-this.y);
+            c.translate(this.x - 20, this.y - 20);
+            c.rotate(rotation * Math.PI / 180); // rotate
+            c.translate(-this.x - 20,-this.y - 20);
             c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
             c.restore(); // restore original states (no rotation etc)
         }
