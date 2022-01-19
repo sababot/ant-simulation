@@ -4,6 +4,14 @@ var c = canvas.getContext('2d');
 document.addEventListener('keydown', aim, true);
 document.addEventListener('keyup', aim2, true);
 
+canvas.addEventListener("mousemove", e => {
+
+    mouse_pos = {
+        x: e.clientX - canvas.offsetLeft,
+        y: e.clientY - canvas.offsetTop
+    }
+});
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -30,6 +38,8 @@ function Player(x, y, infected){
     this.move_x_right = true;
     this.move_y_up = true;
     this.move_y_down = true;
+    this.angle;
+    this.angle2
 
     this.draw = function(){
         /* Graphics
@@ -48,8 +58,19 @@ function Player(x, y, infected){
         var img = new Image();
         img.src = 'ant-image.png';
 
+        this.angle = Math.atan2(mouse_pos.y - this.y, mouse_pos.x - this.y);
+        this.angle *= (180 / Math.PI);
+        
+        if (this.angle < 0){
+            this.agnle2 = 360 + this.angle;
+        }
+
+        else if (this.angle > 0){
+            this.angle2 = this.angle;
+        }
+
         // Movement
-        if (left == true && up == false && down == false && this.x > 0){
+        if (rotation > (this.angle2 - 90)){
             c.save(); // save current state
             c.translate(this.x - 20, this.y - 20);
             c.rotate((rotation - 2.5) * Math.PI / 180); // rotate
@@ -60,7 +81,41 @@ function Player(x, y, infected){
         }
         
         ////////////////
-        else if (right == true && up == false && down == false && this.x < window.innerWidth - 41){
+        else if (rotation < (this.angle2 - 90)){
+            c.save(); // save current state
+            c.translate(this.x - 20, this.y - 20);
+            c.rotate((rotation + 2.5) * Math.PI / 180); // rotate
+            c.translate(-this.x - 20,-this.y - 20);
+            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
+            c.restore(); // restore original states (no rotation etc)
+            rotation += 2.5;
+        }
+        
+        ////////////////
+        else if (rotation == (this.angle2 - 90)){
+            c.save(); // save current state
+            c.translate(this.x - 20, this.y - 20);
+            c.rotate(rotation * Math.PI / 180); // rotate
+            c.translate(-this.x - 20,-this.y - 20);
+            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
+            c.restore(); // restore original states (no rotation etc)
+        }
+
+        console.log(this.angle2);
+
+        /*
+        if (left == true && up == true && this.x > 0){
+            c.save(); // save current state
+            c.translate(this.x - 20, this.y - 20);
+            c.rotate((rotation - 2.5) * Math.PI / 180); // rotate
+            c.translate(-this.x - 20,-this.y - 20);
+            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
+            c.restore(); // restore original states (no rotation etc)
+            rotation -= 2.5;
+        }
+        
+        ////////////////
+        else if (right == true && up == true && this.x < window.innerWidth - 41){
             c.save(); // save current state
             c.translate(this.x - 20, this.y - 20);
             c.rotate((rotation + 2.5) * Math.PI / 180); // rotate
@@ -79,6 +134,8 @@ function Player(x, y, infected){
             c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
             c.restore(); // restore original states (no rotation etc)
         }
+        */
+
         /*
         if (down == true && right == false && left == false && this.y < window.innerWidth - 41){
             playerVariable.dy = 5;
@@ -91,14 +148,14 @@ function Player(x, y, infected){
 
         ////////////////
         if (down == false && up == false && right == false && left == false){
-            c.save(); // save current state
-            c.translate(this.x - 20, this.y - 20);
-            c.rotate(rotation * Math.PI / 180); // rotate
-            c.translate(-this.x - 20,-this.y - 20);
-            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
-            c.restore(); // restore original states (no rotation etc)
+            playerVariable.dx = 0;
+            playerVariable.dy = 0;
         }
         ////////////////
+        else if (up == true){
+            playerVariable.dx = Math.cos((rotation - 90) * (Math.PI / 180)) * 5;
+            playerVariable.dy = Math.sin((rotation - 90) * (Math.PI / 180)) * 5;
+        }
 
         if (this.y > window.innerHeight- 40){
             this.y = window.innerHeight - 40;
