@@ -58,50 +58,31 @@ function Player(x, y, infected){
         var img = new Image();
         img.src = 'ant-image.png';
 
-        this.angle = Math.atan2(mouse_pos.y - this.y, mouse_pos.x - this.y);
+        var img2 = new Image();
+        img2.src = 'ant-head-image.jpeg';
+
+        this.angle = Math.atan2(mouse_pos.y - (this.y + 20), mouse_pos.x - (this.x + 20));
         this.angle *= (180 / Math.PI);
-        
+
         if (this.angle < 0){
-            this.agnle2 = 360 + this.angle;
+            this.angle = 360 - (this.angle * -1);
         }
 
-        else if (this.angle > 0){
-            this.angle2 = this.angle;
-        }
+        rotation = this.angle + 90;
 
-        // Movement
-        if (rotation > (this.angle2 - 90)){
-            c.save(); // save current state
-            c.translate(this.x - 20, this.y - 20);
-            c.rotate((rotation - 2.5) * Math.PI / 180); // rotate
-            c.translate(-this.x - 20,-this.y - 20);
-            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
-            c.restore(); // restore original states (no rotation etc)
-            rotation -= 2.5;
-        }
-        
-        ////////////////
-        else if (rotation < (this.angle2 - 90)){
-            c.save(); // save current state
-            c.translate(this.x - 20, this.y - 20);
-            c.rotate((rotation + 2.5) * Math.PI / 180); // rotate
-            c.translate(-this.x - 20,-this.y - 20);
-            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
-            c.restore(); // restore original states (no rotation etc)
-            rotation += 2.5;
-        }
-        
-        ////////////////
-        else if (rotation == (this.angle2 - 90)){
-            c.save(); // save current state
-            c.translate(this.x - 20, this.y - 20);
-            c.rotate(rotation * Math.PI / 180); // rotate
-            c.translate(-this.x - 20,-this.y - 20);
-            c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
-            c.restore(); // restore original states (no rotation etc)
-        }
+        c.save(); // save current state
+        c.translate(this.x - 10, this.y - 10);
+        c.rotate(rotation * Math.PI / 180); // rotate
+        c.translate(-this.x - 10,-this.y - 10);
+        c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
+        c.restore(); // restore original states (no rotation etc)
 
-        console.log(this.angle2);
+        c.save(); // save current state
+        c.translate(this.x - 10, this.y - 10);
+        c.rotate(rotation * Math.PI / 180); // rotate
+        c.translate(-this.x - 10,-this.y - 10);
+        c.drawImage(img2, this.x + 10, this.y, 20, 20); // draws a chain link or dagger
+        c.restore(); // restore original states (no rotation etc)
 
         /*
         if (left == true && up == true && this.x > 0){
@@ -152,7 +133,7 @@ function Player(x, y, infected){
             playerVariable.dy = 0;
         }
         ////////////////
-        else if (up == true){
+        else if (up == true && mouse_pos.x != this.x && mouse_pos.y != this.y){
             playerVariable.dx = Math.cos((rotation - 90) * (Math.PI / 180)) * 5;
             playerVariable.dy = Math.sin((rotation - 90) * (Math.PI / 180)) * 5;
         }
