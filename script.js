@@ -21,6 +21,7 @@ var up = false;
 var down = false;
 let jump = 0;
 let rotation = 0;
+let rotation_body = 0;
 
 function Player(x, y, infected){
     this.x = x;
@@ -39,7 +40,7 @@ function Player(x, y, infected){
     this.move_y_up = true;
     this.move_y_down = true;
     this.angle;
-    this.angle2
+    this.destination = [0, 0];
 
     this.draw = function(){
         /* Graphics
@@ -56,10 +57,10 @@ function Player(x, y, infected){
         */
 
         var img = new Image();
-        img.src = 'ant-image.png';
+        img.src = 'ant-body.png';
 
         var img2 = new Image();
-        img2.src = 'ant-head-image.jpeg';
+        img2.src = 'ant-head.png';
 
         this.angle = Math.atan2(mouse_pos.y - (this.y + 20), mouse_pos.x - (this.x + 20));
         this.angle *= (180 / Math.PI);
@@ -71,17 +72,17 @@ function Player(x, y, infected){
         rotation = this.angle + 90;
 
         c.save(); // save current state
-        c.translate(this.x - 10, this.y - 10);
+        c.translate(this.x - 15, this.y - 15);
         c.rotate(rotation * Math.PI / 180); // rotate
-        c.translate(-this.x - 10,-this.y - 10);
-        c.drawImage(img, this.x, this.y, 40, 40); // draws a chain link or dagger
+        c.translate(-this.x - 15,-this.y - 15);
+        c.drawImage(img, this.x - 15, this.y - 15, 60, 60); // draws a chain link or dagger
         c.restore(); // restore original states (no rotation etc)
 
         c.save(); // save current state
-        c.translate(this.x - 10, this.y - 10);
+        c.translate(this.x - 15, this.y - 15);
         c.rotate(rotation * Math.PI / 180); // rotate
-        c.translate(-this.x - 10,-this.y - 10);
-        c.drawImage(img2, this.x + 10, this.y, 20, 20); // draws a chain link or dagger
+        c.translate(-this.x - 15,-this.y - 15);
+        c.drawImage(img2, this.x - 15, this.y - 15, 60, 60); // draws a chain link or dagger
         c.restore(); // restore original states (no rotation etc)
 
         /*
