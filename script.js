@@ -21,7 +21,9 @@ var up = false;
 var down = false;
 let jump = 0;
 let rotation = 0;
-let rotation_body = 0;
+let rotation2 = 0;
+let rotation3 = 0;
+let rotation4 = 0;
 
 function Player(x, y, infected){
     this.x = x;
@@ -41,6 +43,12 @@ function Player(x, y, infected){
     this.move_y_down = true;
     this.angle;
     this.destination = [0, 0];
+    this.angular_rotation = 3;
+    this.angular_rotation2 = 4;
+    this.angular_rotation3 = 6;
+    this.targetx = 0;
+    this.targety = 0;
+    this.targetangle = 0;
 
     this.draw = function(){
         /* Graphics
@@ -57,33 +65,118 @@ function Player(x, y, infected){
         */
 
         var img = new Image();
-        img.src = 'ant-body.png';
+        img.src = 'ant-head.png';
 
         var img2 = new Image();
-        img2.src = 'ant-head.png';
+        img2.src = 'ant-middle.png';
 
-        this.angle = Math.atan2(mouse_pos.y - (this.y + 20), mouse_pos.x - (this.x + 20));
+        var img3 = new Image();
+        img3.src = 'ant-butt.png';
+
+        this.angle = Math.atan2((this.y + this.targety) - (this.y + 20), (this.x + this.targetx) - (this.x + 20));
         this.angle *= (180 / Math.PI);
+        this.angle += 90;
 
         if (this.angle < 0){
             this.angle = 360 - (this.angle * -1);
         }
 
-        rotation = this.angle + 90;
+        this.targetx = Math.cos(this.targetangle * (Math.PI / 180)) * 80;
+        this.targety = Math.sin(this.targetangle * (Math.PI / 180)) * 80;
+
+        console.log(this.targetangle);
+
+        c.save(); // save current state
+        c.beginPath();
+        c.arc(this.x - 20 + this.targetx, this.y - 20 + this.targety, 4, 0, 2 * Math.PI);
+        c.fillStyle = "#68f907";
+        c.fill();
+        c.stroke();
+        c.restore(); // restore original states (no rotation etc)
 
         c.save(); // save current state
         c.translate(this.x - 15, this.y - 15);
-        c.rotate(rotation * Math.PI / 180); // rotate
+        c.rotate(rotation3 * Math.PI / 180); // rotate
         c.translate(-this.x - 15,-this.y - 15);
         c.drawImage(img, this.x - 15, this.y - 15, 60, 60); // draws a chain link or dagger
         c.restore(); // restore original states (no rotation etc)
 
         c.save(); // save current state
         c.translate(this.x - 15, this.y - 15);
-        c.rotate(rotation * Math.PI / 180); // rotate
+        c.rotate(rotation2 * Math.PI / 180); // rotate
         c.translate(-this.x - 15,-this.y - 15);
         c.drawImage(img2, this.x - 15, this.y - 15, 60, 60); // draws a chain link or dagger
         c.restore(); // restore original states (no rotation etc)
+
+        c.save(); // save current state
+        c.translate(this.x - 15, this.y - 15);
+        c.rotate(rotation * Math.PI / 180); // rotate
+        c.translate(-this.x - 15,-this.y - 15);
+        c.drawImage(img3, this.x - 15, this.y - 15, 60, 60); // draws a chain link or dagger
+        c.restore(); // restore original states (no rotation etc)
+
+        ///////////////////////////
+
+
+        if (Math.abs(this.angle - rotation) > 330){
+            rotation = this.angle;
+        }
+
+        else if (rotation < this.angle){
+            rotation += this.angular_rotation;
+        }
+
+        else if (rotation > this.angle){
+            rotation -= this.angular_rotation;
+        }
+
+        else if (rotation < this.angle + 5 && rotation > this.angle - 5){
+            rotation = rotation;
+        }
+
+        ///////////////////////////
+
+        if (Math.abs(this.angle - rotation2) > 320){
+            rotation2 = this.angle;
+        }
+
+        else if (rotation2 < this.angle){
+            rotation2 += this.angular_rotation2;
+        }
+
+        else if (rotation2 > this.angle){
+            rotation2 -= this.angular_rotation2;
+        }
+
+        else if (rotation2 < this.angle + 5 && rotation2 > this.angle - 5){
+            rotation2 = rotation2;
+        }
+
+        ///////////////////////////
+
+        if (Math.abs(this.angle - rotation3) > 320){
+            rotation3 = this.angle;
+        }
+
+        else if (rotation3 < this.angle){
+            rotation3 += this.angular_rotation3;
+        }
+
+        else if (rotation3 > this.angle){
+            rotation3 -= this.angular_rotation3;
+        }
+
+        else if (rotation3 < this.angle + 5 && rotation3 > this.angle - 5){
+            rotation3 = rotation2;
+        }
+
+        if (right == true){
+            this.targetangle += 2.65;
+        }
+
+        else if (left == true){
+            this.targetangle -= 2.65;
+        }
 
         /*
         if (left == true && up == true && this.x > 0){
