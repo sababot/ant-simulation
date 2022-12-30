@@ -4,14 +4,6 @@ var c = canvas.getContext('2d');
 document.addEventListener('keydown', aim, true);
 document.addEventListener('keyup', aim2, true);
 
-canvas.addEventListener("mousemove", e => {
-
-    mouse_pos = {
-        x: e.clientX - canvas.offsetLeft,
-        y: e.clientY - canvas.offsetTop
-    }
-});
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -37,7 +29,7 @@ function QueenAnt(x, y, infected){
     this.m = 2.5;
     this.colliding = true;
     this.infected = infected;
-    this.vel = 1;
+    this.vel = 0;
     this.jump_vel = 10;
     this.health = 100;
     this.move_x_left = true;
@@ -200,7 +192,7 @@ function QueenAnt(x, y, infected){
         }
         ////////////////
         else if (up == true){
-            if (this.speed_rate < 5){
+            if (this.speed_rate < 4){
                 this.speed_rate += 0.5;
             }
         }

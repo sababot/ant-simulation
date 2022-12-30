@@ -1,5 +1,9 @@
+*{
+  overflow: hidden;
+}
+
 canvas{
-  background: #92ff54;
+  background: transparent;
 }
 
 body {
