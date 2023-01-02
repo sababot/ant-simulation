@@ -33,7 +33,7 @@ function PlayerAnt(x, y, infected){
 
     this.draw = function(){
         var img = new Image();
-        img.src = 'ant-template.png';
+        img.src = 'images/player-ant.png';
 
         c.save(); // save current state
         c.translate(this.x - 7.5, this.y - 7.5);
@@ -71,15 +71,15 @@ function PlayerAnt(x, y, infected){
         if (this.y > window.innerHeight){
             this.y = window.innerHeight;
         }
-        else if (this.y < 40){
-            this.y = 40;
+        else if (this.y < 15){
+            this.y = 15;
         }
 
         if (this.x > window.innerWidth){
             this.x = window.innerWidth;
         }
-        else if (this.x < 40){
-            this.x = 40;
+        else if (this.x < 15){
+            this.x = 15;
         }
 
         // Movement
@@ -103,7 +103,7 @@ function Ant(x, y, rotation, infected){
 
     this.draw = function(){
         this.img = new Image();
-        this.img.src = 'ant-template.png';
+        this.img.src = 'images/ant.png';
 
         c.save(); // save current state
         c.translate(this.x - 7.5, this.y - 7.5);
@@ -150,17 +150,30 @@ function Ant(x, y, rotation, infected){
         this.dy = Math.sin((this.rotation - 90) * (Math.PI / 180)) * this.speed;
 
         if (this.y > window.innerHeight){
-            this.y = window.innerHeight;
+            if (this.rotation <= 180)
+                this.rotation -= 2;
+            else
+                this.rotation += 2;
         }
-        else if (this.y < 40){
-            this.y = 40;
+        else if (this.y < 0){
+            if (this.rotation <= 180)
+                this.rotation += 2;
+            else
+                this.rotation -= 2;
         }
 
         if (this.x > window.innerWidth){
-            this.x = window.innerWidth;
+            if (this.rotation <= 90)
+                this.rotation -= 2;
+            else
+                this.rotation += 2;
         }
-        else if (this.x < 40){
-            this.x = 40;
+
+        else if (this.x < 0){
+            if (this.rotation <= 270)
+                this.rotation -= 2;
+            else
+                this.rotation += 2;
         }
 
         // Movement
