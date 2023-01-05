@@ -16,6 +16,7 @@ var up = false;
 var down = false;
 let jump = 0;
 let rotation = 0;
+let home_radius = 30;
 
 let secondsPassed = 0;
 let oldTimeStamp = 0;
@@ -96,7 +97,7 @@ function Ant(x, y, rotation, infected){
     this.dy = 0;
     this.angular_rotation = rotation;
     this.speed = 1.5;
-    this.rotation = Math.floor((Math.random() * 360) + 1);
+    this.rotation = rotation;
     this.count = 0;
     this.dir = 0;
     this.angular_speed = 2;
@@ -183,12 +184,19 @@ function Ant(x, y, rotation, infected){
 }
 
 // SPAWN PLAYER ANT
-var playerVariable = new PlayerAnt(canvas.width / 2, canvas.height / 2);
+var playerVariable = new PlayerAnt(canvas.width / 2, canvas.height / 2 - home_radius);
 
 // SPAWN ANTS
 var ants = [];
 for (var i = 0; i < 120; i++){
-    ants.push(new Ant(canvas.width / 2, canvas.height / 2, i * 3));
+    if ((i * 3) < 90)
+        ants.push(new Ant(canvas.width / 2 + (Math.cos((90 - (i * 3)) * (Math.PI / 180)) * home_radius), canvas.height / 2 - (Math.sin((90 - (i * 3)) * (Math.PI / 180)) * home_radius), i * 3));
+    else if ((i * 3) < 180 && (i * 3) > 90)
+        ants.push(new Ant(canvas.width / 2 + (Math.cos((90 - (i * 3)) * (Math.PI / 180)) * home_radius), canvas.height / 2 - (Math.sin((90 - (i * 3)) * (Math.PI / 180)) * home_radius), i * 3));
+    else if ((i * 3) < 270 && (i * 3) > 180)
+        ants.push(new Ant(canvas.width / 2 - (Math.cos((270 - (i * 3)) * (Math.PI / 180)) * home_radius), canvas.height / 2 + (Math.sin((270 - (i * 3)) * (Math.PI / 180)) * home_radius), i * 3));
+    else if ((i * 3) > 270)
+        ants.push(new Ant(canvas.width / 2 - (Math.cos(((i * 3) - 270) * (Math.PI / 180)) * home_radius), canvas.height / 2 - (Math.sin(((i * 3) - 270) * (Math.PI / 180)) * home_radius), i * 3));
 }
 
 // PLAYER CONTROLS
@@ -250,6 +258,8 @@ function animate(timeStamp){
 
     // GameObjects
     playerVariable.draw();
+    c.arc(canvas.width/2 - (home_radius / 4), canvas.height/2 - (home_radius / 4), home_radius, 0, 2 * Math.PI);
+    c.fill();
 
     c.restore();
 }
