@@ -1,27 +1,30 @@
 var canvas = document.getElementById('canvas');
 var c = canvas.getContext('2d');
 
-// INIT
-c.imageSmoothingEnabled = false;
+// INITf
 document.addEventListener('keydown', aim, true);
-document.addEventListener('keyup', aim2, true);
+//document.addEventListener('keyup', aim2, true);
+
 
 // GLOBAL VARIABLES
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+/*
 var left = false;
 var right = false;
 var up = false;
 var down = false;
 let jump = 0;
 let rotation = 0;
+*/
+var pause = false;
 let home_radius = 30;
 
 let secondsPassed = 0;
 let oldTimeStamp = 0;
 
-// PLAYER ANT VARIABLE
+/* PLAYER ANT VARIABLE
 function PlayerAnt(x, y, infected){
     this.x = x;
     this.y = y;
@@ -88,6 +91,7 @@ function PlayerAnt(x, y, infected){
         this.y += this.dy;
     }
 }
+*/
 
 // ANT VARIABLE
 function Ant(x, y, rotation, infected){
@@ -184,7 +188,7 @@ function Ant(x, y, rotation, infected){
 }
 
 // SPAWN PLAYER ANT
-var playerVariable = new PlayerAnt(canvas.width / 2, canvas.height / 2 - home_radius);
+// var playerVariable = new PlayerAnt(canvas.width / 2, canvas.height / 2 - home_radius);
 
 // SPAWN ANTS
 var ants = [];
@@ -201,6 +205,7 @@ for (var i = 0; i < 120; i++){
 
 // PLAYER CONTROLS
 function aim(e){
+    /*
     if(e.keyCode == 37 || e.keyCode == 65){
         left = true;
     }
@@ -208,16 +213,24 @@ function aim(e){
     if(e.keyCode == 39 || e.keyCode == 68){
         right = true;
     }
+    */
 
-    if(e.keyCode == 38 || e.keyCode == 87 || e.keyCode == 32){
-        up = true;
+    if(e.keyCode == 32){
+        if (pause == false){
+            pause = true;
+        }
+        else if (pause == true){
+            pause = false;
+        }
     }
+    /*
 
     if(e.keyCode == 40 || e.keyCode == 83){
         down = true;
     }
+    */
 }
-
+/*
 function aim2(e){
     if((e.keyCode == 37 && left == true) || (e.keyCode == 65 && left == true)){
         playerVariable.dx = 0;
@@ -243,25 +256,30 @@ function aim2(e){
         down = false
     }
 }
+*/
 
 // UPDATE
 function animate(timeStamp){
-    secondsPassed = (timeStamp - oldTimeStamp) / 1000;
-    oldTimeStamp = timeStamp;
+    if (pause == false){
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
 
-    requestAnimationFrame(animate);
-    c.clearRect(0, 0, canvas.width, canvas.height);
+        c.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (var i = 0; i < ants.length; i++){
-        ants[i].draw();
+        for (var i = 0; i < ants.length; i++){
+            ants[i].draw();
+        }
+
+        // GameObjects
+        //playerVariable.draw();
+        //c.arc(canvas.width/2 - (home_radius / 4), canvas.height/2 - (home_radius / 4), home_radius, 0, 2 * Math.PI);
+        //c.fill();
+
+        c.restore();
     }
 
-    // GameObjects
-    playerVariable.draw();
-    c.arc(canvas.width/2 - (home_radius / 4), canvas.height/2 - (home_radius / 4), home_radius, 0, 2 * Math.PI);
-    c.fill();
+    requestAnimationFrame(animate);
 
-    c.restore();
 }
 
 animate();
