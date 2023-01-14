@@ -192,15 +192,15 @@ function Ant(x, y, rotation, infected){
 
 // SPAWN ANTS
 var ants = [];
-for (var i = 0; i < 120; i++){
-    if ((i * 3) < 90)
-        ants.push(new Ant(canvas.width / 2 + (Math.cos((90 - (i * 3)) * (Math.PI / 180)) * home_radius), canvas.height / 2 - (Math.sin((90 - (i * 3)) * (Math.PI / 180)) * home_radius), i * 3));
-    else if ((i * 3) < 180 && (i * 3) > 90)
-        ants.push(new Ant(canvas.width / 2 + (Math.cos((90 - (i * 3)) * (Math.PI / 180)) * home_radius), canvas.height / 2 - (Math.sin((90 - (i * 3)) * (Math.PI / 180)) * home_radius), i * 3));
-    else if ((i * 3) < 270 && (i * 3) > 180)
-        ants.push(new Ant(canvas.width / 2 - (Math.cos((270 - (i * 3)) * (Math.PI / 180)) * home_radius), canvas.height / 2 + (Math.sin((270 - (i * 3)) * (Math.PI / 180)) * home_radius), i * 3));
-    else if ((i * 3) > 270)
-        ants.push(new Ant(canvas.width / 2 - (Math.cos(((i * 3) - 270) * (Math.PI / 180)) * home_radius), canvas.height / 2 - (Math.sin(((i * 3) - 270) * (Math.PI / 180)) * home_radius), i * 3));
+for (var i = 0; i < 180; i++){
+    if ((i * 2) < 90)
+        ants.push(new Ant(canvas.width / 2 + (Math.cos((90 - (i * 2)) * (Math.PI / 180)) * home_radius), canvas.height / 2 - (Math.sin((90 - (i * 2)) * (Math.PI / 180)) * home_radius), i * 2));
+    else if ((i * 2) < 180 && (i * 2) > 90)
+        ants.push(new Ant(canvas.width / 2 + (Math.cos((90 - (i * 2)) * (Math.PI / 180)) * home_radius), canvas.height / 2 - (Math.sin((90 - (i * 2)) * (Math.PI / 180)) * home_radius), i * 2));
+    else if ((i * 2) < 270 && (i * 2) > 180)
+        ants.push(new Ant(canvas.width / 2 - (Math.cos((270 - (i * 2)) * (Math.PI / 180)) * home_radius), canvas.height / 2 + (Math.sin((270 - (i * 2)) * (Math.PI / 180)) * home_radius), i * 2));
+    else if ((i * 2) > 270)
+        ants.push(new Ant(canvas.width / 2 - (Math.cos(((i * 2) - 270) * (Math.PI / 180)) * home_radius), canvas.height / 2 - (Math.sin(((i * 2) - 270) * (Math.PI / 180)) * home_radius), i * 2));
 }
 
 // PLAYER CONTROLS
@@ -272,8 +272,21 @@ function animate(timeStamp){
 
         // GameObjects
         //playerVariable.draw();
-        //c.arc(canvas.width/2 - (home_radius / 4), canvas.height/2 - (home_radius / 4), home_radius, 0, 2 * Math.PI);
-        //c.fill();
+
+        // HOME
+        c.beginPath();
+        c.arc(canvas.width/2 - (home_radius / 4), canvas.height/2 - (home_radius / 4), home_radius, 0, 2 * Math.PI);
+        c.fillStyle = "darkgrey";
+        c.fill();
+        c.stroke();
+
+        // HELP
+        c.beginPath();
+        c.font = "20px Monospace";
+        c.fillStyle = "darkgrey"
+        c.fillText('SPACE   Pause/Resume', 10, 20);
+        c.fillText('  +     Increment Speed', 10, 40);
+        c.fillText('  -     Decrement Speed', 10, 60);
 
         c.restore();
     }
