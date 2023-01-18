@@ -2,8 +2,18 @@
 var canvas = document.getElementById('canvas');
 var c = canvas.getContext('2d');
 
-// KEYBOARD INPUT
+// KEYBOARD/MOUSE INPUT
 document.addEventListener('keydown', aim, true);
+document.addEventListener('mousemove', e=> {
+    mouse_pos = {
+        x: e.clientX - canvas.offsetLeft,
+        y: e.clientY - canvas.offsetTop
+    }
+});
+
+canvas.onmousedown = function(e){
+    foods.push(new Food(mouse_pos.x, mouse_pos.y, 25));
+}
 
 // GLOBAL VARIABLES
 canvas.width = window.innerWidth;
@@ -15,6 +25,12 @@ let home_radius = 30;
 let secondsPassed = 0;
 let oldTimeStamp = 0;
 
+var ants = [];
+var foods = [];
+var to_food_trails = [];
+var to_home_trails = [];
+
+var total_food = 0;
 
 
 // ANT VARIABLE
@@ -32,40 +48,65 @@ function Ant(x, y, rotation, infected){
     this.movement_count = 0;
     this.dir = 0;
 
-    this.trail_points = [];
     this.trail_count = 0;
 
+    this.has_food = false;
+    this.path = [];
+    this.path_index = 0;
+    this.path_x;
+    this.path_y;
+
     this.movement = function() {
-        // decide random direction to move
-        if (this.movement_count == 0 && Math.floor((Math.random() * 3) + 1) == 1){
-            this.movement_count = Math.floor((Math.random() * 10) + 1);
-            this.dir = 0;
+        if (this.has_food == false){ // if searching for food
+            // decide random direction to move
+            if (this.movement_count == 0 && Math.floor((Math.random() * 3) + 1) == 1){
+                this.movement_count = Math.floor((Math.random() * 10) + 1);
+                this.dir = 0;
+            }
+
+            else if (this.movement_count == 0 && Math.floor((Math.random() * 3) + 1) == 2){
+                this.movement_count = Math.floor((Math.random() * 10) + 1);
+                this.dir = 1;
+            }
+
+            else if (this.movement_count == 0 && Math.floor((Math.random() * 3) + 1) == 3){
+                this.movement_count = Math.floor((Math.random() * 50) + 15);
+                this.dir = 2;
+            }
+
+            // perform random direction rotation
+            if (this.movement_count > 0 && this.dir == 1){
+                this.rotation += this.angular_speed;
+                this.movement_count -= 1;
+            }
+
+            else if (this.movement_count > 0 && this.dir == 0){
+                this.rotation -= this.angular_speed;
+                this.movement_count -= 1;
+            }
+
+            else if (this.movement_count > 0 && this.dir == 2){
+                this.rotation += 0;
+                this.movement_count -= 1;
+            }
         }
 
-        else if (this.movement_count == 0 && Math.floor((Math.random() * 3) + 1) == 2){
-            this.movement_count = Math.floor((Math.random() * 10) + 1);
-            this.dir = 1;
-        }
+        else{
+            // store current trail point coordinate
+            this.path_x = this.path[this.path_index][0];
+            this.path_y = this.path[this.path_index][1];
 
-        else if (this.movement_count == 0 && Math.floor((Math.random() * 3) + 1) == 3){
-            this.movement_count = Math.floor((Math.random() * 50) + 15);
-            this.dir = 2;
-        }
+            // rotate towards current trail point
+            this.rotation = + 90 + Math.atan2(Math.floor(this.path_y) - this.y, Math.floor(this.path_x) - this.x) * (180 / Math.PI);
 
-        // perform random direction rotation
-        if (this.movement_count > 0 && this.dir == 1){
-            this.rotation += this.angular_speed;
-            this.movement_count -= 1;
-        }
-
-        else if (this.movement_count > 0 && this.dir == 0){
-            this.rotation -= this.angular_speed;
-            this.movement_count -= 1;
-        }
-
-        else if (this.movement_count > 0 && this.dir == 2){
-            this.rotation += 0;
-            this.movement_count -= 1;
+            // move to next trail point
+            if (Math.sqrt(Math.pow(this.path_x - this.x, 2) + Math.pow(this.path_y - this.y, 2)) < 2 && this.path_index != 0)
+                this.path_index -= 1;
+            else if (Math.sqrt(Math.pow(this.path_x - this.x, 2) + Math.pow(this.path_y - this.y, 2)) < 2 && this.path_index == 0){
+                this.path = [];
+                this.has_food = false;
+                total_food += 5;
+            }
         }
 
         // calculate movement with rotation
@@ -122,26 +163,33 @@ function Ant(x, y, rotation, infected){
 
     this.trail = function() {
         var max_trail_count = 50;
-        var trail_point_lifetime = 1000;
+        var trail_point_lifetime = 3000;
 
         if (this.trail_count == 0){
-            this.trail_points.push([this.x, this.y, trail_point_lifetime])
+            if (!this.has_food){
+                to_food_trails.push([this.x, this.y, trail_point_lifetime]);
+                this.path.push([this.x, this.y]);
+            }
+
+            else
+                to_home_trails.push([this.x, this.y, trail_point_lifetime]);
+
             this.trail_count = max_trail_count;
         }
 
         else
             this.trail_count--;
+    }
 
-        for (var i = 0; i < this.trail_points.length; i++){
-            if (this.trail_points[i][2] > 0){
-                c.beginPath();
-                c.arc(this.trail_points[i][0] - 10, this.trail_points[i][1] - 10, this.trail_points[i][2]/200, 0, 2 * Math.PI);
-                c.fillStyle = "darkblue";
-                c.fill();
-                this.trail_points[i][2] -= 1;
+    this.get_food = function() {
+        if (this.has_food == false){
+            for (var i = 0; i < foods.length; i++){
+                if (Math.sqrt(Math.pow(foods[i].x - this.x, 2) + Math.pow(foods[i].y - this.y, 2)) < foods[i].amount){
+                    foods[i].amount -= 5;
+                    this.has_food = true;
+                    this.path_index = this.path.length - 2;
+                }
             }
-            else
-                this.trail_points.splice(1, i);
         }
     }
 
@@ -150,12 +198,25 @@ function Ant(x, y, rotation, infected){
         this.boundaries();
         this.trail();
         this.draw();
+        this.get_food();
+    }
+}
+
+function Food(x, y, amount) {
+    this.x = x;
+    this.y = y;
+    this.amount = amount;
+
+    this.draw = function(){
+        c.beginPath();
+        c.arc(this.x - (this.amount / 4), this.y - (this.amount / 4), this.amount, 0, 2 * Math.PI);
+        c.fillStyle = "#e67b10";
+        c.fill();
     }
 }
 
 // SPAWN ANTS
-var ants = [];
-for (var i = 0; i < 50; i++){
+for (var i = 0; i < 75; i++){
     if ((i * 2) < 90)
         ants.push(new Ant(canvas.width / 2 + (Math.cos((90 - (i * 2)) * (Math.PI / 180)) * home_radius), canvas.height / 2 - (Math.sin((90 - (i * 2)) * (Math.PI / 180)) * home_radius), i * 2));
     else if ((i * 2) < 180 && (i * 2) > 90)
@@ -188,9 +249,40 @@ function animate(timeStamp){
         // CLEAR SCREEN FOR NEXT FRAME
         c.clearRect(0, 0, canvas.width, canvas.height);
 
+        /* DRAW TRAILS
+        for (var i = 0; i < to_food_trails.length; i++){
+            if (to_food_trails[i][2] > 0){
+                c.beginPath();
+                c.arc(to_food_trails[i][0] - 10, to_food_trails[i][1] - 10, to_food_trails[i][2]/500, 0, 2 * Math.PI);
+                c.fillStyle = "#6588c9";
+                c.fill();
+                to_food_trails[i][2] -= 1;
+            }
+            else
+                to_food_trails.splice(1, i);
+        }
+        */
+
+        for (var i = 0; i < to_home_trails.length; i++){
+            if (to_home_trails[i][2] > 0){
+                c.beginPath();
+                c.arc(to_home_trails[i][0] - 10, to_home_trails[i][1] - 10, to_home_trails[i][2]/500, 0, 2 * Math.PI);
+                c.fillStyle = "red";
+                c.fill();
+                to_home_trails[i][2] -= 1;
+            }
+            else
+                to_home_trails.splice(1, i);
+        }
+
         // DRAW ANTS
         for (var i = 0; i < ants.length; i++){
             ants[i].update();
+        }
+
+        // DRAW FOOD
+        for (var i = 0; i < foods.length; i++){
+            foods[i].draw();
         }
 
         // DRAW HOME
@@ -207,6 +299,13 @@ function animate(timeStamp){
         c.fillText('SPACE   Pause/Resume', 10, 20);
         c.fillText('  +     Increment Speed', 10, 40);
         c.fillText('  -     Decrement Speed', 10, 60);
+
+        // DRAW STATS
+        c.beginPath();
+        c.font = "20px Monospace";
+        c.fillStyle = "black";
+        c.textAlign = "center";
+        c.fillText(String(total_food), (canvas.width / 2) - 8, (canvas.height / 2) - 2);
 
         // RESTORE CANVAS STATE 
         c.restore();
